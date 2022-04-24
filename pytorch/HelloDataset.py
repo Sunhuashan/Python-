@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-training_data = datasets.FashionMNIST(  # 加载Dataset
+training_data = datasets.FashionMNIST(  # 加载 FashionMNIST 数据集
     root="data",
     train=True,
     download=True,

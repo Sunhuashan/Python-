@@ -122,7 +122,7 @@ print(x < y)
 
 x = torch.rand(3, 4)  # 张量的连接 con'cat'enate
 y = torch.ones(3, 4)
-z = torch.rand_like(x)   # dim,即dimension 维度或理解为轴
+z = torch.rand_like(x)   # dim,即dimension理解为轴
 torch.cat((x, y), dim=0, out=z)  # 3*4 => 6*4
 print(z)
 torch.cat((x, y), dim=1, out=z)  # 3*4 => 3*8
@@ -133,5 +133,110 @@ y = torch.ones(3, 4, 1, 7)  # 如，3*4*8*7 的张量与 3*4*1*7 的张量只能
 z = torch.cat([x, y], dim=2)  # 如，3*4 的张量与 4*3 的张量永远无法拼接
 print(f"Shape:  {z} \n {z.shape}")
 
-x = torch.tensor([[1, 2, 3], [3, 4, 5]])  # 元素值的和
+x = torch.tensor([[1, 2, 3], [3, 4, 5]])  # 元素值的和 n*m => 1*1
 print(x.sum())
+
+x = torch.tensor([[1],
+                  [2],
+                  [3]])  # 3*1 => 3*2
+y = torch.tensor([4, 5])  # 1*2 => 3*2
+print(x + y)  # 不同形张量自动使用广播机制(复制已有轴的元素)转为同形张量
+
+x_broc = torch.tensor([[1, 1],
+                       [2, 2],
+                       [3, 3]])
+y_broc = torch.tensor([[4, 5],
+                       [4, 5],
+                       [4, 5]])
+print(x_broc + y_broc)  # 使用广播机制后的元素级加法
+#  广播机制中不匹配的维数中必须是 1 => n,从1维 升到 n维
+#  例如 2*3 => 3*3 是不能实现的，系统不知道该复制哪一个（2 => 3）
+x = torch.ones(3, 4, 1)  # 3*4*1 => 3*4*5
+y = torch.ones(1, 1, 5)  # 1*2*5 => 3*4*5
+z = x + y
+print(z.shape)  # 3*4*5
+
+x = torch.rand(3, 4, 5)  # 索引与切片
+print(x[0])  # 0-轴第一个元素
+print(x[-1])  # 0-轴最后一个元素
+print(x[0:2])  # 0-轴第一到第二个元素,即左闭右开！
+print(x[1, 0, 2])  # 0-轴第二个，1-轴第一个，2-轴第三个元素
+x[1:3, -1, :] = 0  # 0-轴第二到第三个，1-轴最后一个，2-轴全部元素 赋值
+print(x)
+
+Y = torch.ones(2, 4)
+X = torch.ones(2, 4)
+before = id(Y)
+Y = X + Y  # 自动开辟新内存，将会造成空间浪费
+after = id(Y)
+print(f"before: {before} \n after: {after} \n")
+
+before = id(Y)
+Y[:] = X + Y  # 切片表示法避免重新分配内存空间
+after = id(Y)
+print(f"before: {before} \n after: {after} \n")
+
+X = torch.ones(3, 4)  # numpy数组与tensor之间的转换
+np_array = X.numpy()
+tensor = torch.from_numpy(np_array)
+print(type(np_array))
+print(type(tensor))
+
+Y = torch.rand(1, 1)  # 0维tensor 与 python对象 之间的转换
+print(Y)
+print(Y.item())  # 调用自身函数
+print(float(Y))  # 强转
+print(int(Y))  # 强转
+
+# 张量的维度是指张量具有的轴数(标量是0维张量，向量是1维张量，矩阵是2维张量...)，
+# 而张量的某个轴的维度是指该轴的长度，即该轴的元素个数。
+# To clarify, we use the dimensionality of a vector or an axis to refer to its length,
+# i.e., the number of elements of a vector or an axis.
+# However, we use the dimensionality of a tensor to refer to the number of axes that a tensor has.
+# In this sense, the dimensionality of some axis of a tensor will be the length of that axis.
+
+tensor = torch.ones(3, 4, 5)  # 张量降维求和
+sum_axis0 = tensor.sum(axis=0)  # 3*4*5 => 1*4*5/4*5
+sum_axis1 = tensor.sum(axis=1)  # 3*4*5 => 3*1*5/3*5
+sum_axis2 = tensor.sum(axis=2)  # 3*4*5 => 3*4*1/3*4
+sum_axis0_1 = tensor.sum(axis=[0, 1])  # 3*4*5 => 1*1*5/5(向量）
+sum_axis0_1_2 = tensor.sum()  # 3*4*5 => 1*1*1/1(标量)
+print(tensor)
+print(sum_axis0)
+print(sum_axis1)
+print(sum_axis2)
+print(sum_axis0_1)
+print(sum_axis0_1_2)
+
+tensor = torch.rand(3, 4, 5)  # 张量降维求均值
+mean_axis0_1 = tensor.mean(axis=[0, 1])  # 3*4*5 => 5
+print(tensor)
+print(mean_axis0_1)
+print(tensor.sum(axis=[0, 1]) / (tensor.shape[0]*tensor.shape[1]))  # 降维求和后再算均值
+
+tensor = torch.ones(3, 4, 5)  # 张量不降维求和(保持轴数不变，对比：[[1], [2]] VS [1, 2] ,前者保留 1-轴)
+sum_keepdims = tensor.sum(axis=-1, keepdims=True)  # 待定：使用 keepdims 关键字只能保证沿着最后一个轴时不降维？
+print(tensor.shape)
+print(sum_keepdims.shape)
+
+print(tensor.cumsum(axis=2))  # 沿某轴，计算累积和
+
+x = torch.tensor([1, 3, 5, 2])
+y = torch.arange(4)
+print(x)
+print(y)
+print(torch.dot(x, y))  # 向量间的内积/点积
+print((x*y).sum())  # 内积的另一种实现
+
+A = torch.rand(4, 5, dtype=float)  # Matrix-Vector Products 矩阵向量积
+v = torch.arange(5, dtype=float)
+print(A)
+print(v)
+print(torch.mv(A, v))  # mv--matrix vector
+
+A = torch.rand(4, 5, dtype=float)  # Matrix-Matrix Products
+B = torch.rand(5, 8, dtype=float)
+print(torch.mm(A, B))  # => 4*8
+
+
+
