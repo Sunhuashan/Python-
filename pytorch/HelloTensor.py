@@ -151,6 +151,14 @@ y_broc = torch.tensor([[4, 5],
 print(x_broc + y_broc)  # 使用广播机制后的元素级加法
 #  广播机制中不匹配的维数中必须是 1 => n,从1维 升到 n维
 #  例如 2*3 => 3*3 是不能实现的，系统不知道该复制哪一个（2 => 3）
+#======================================================================
+# 关于广播机制的一些补充：
+# 例如两个tensor的shape分别为(8, 1, 6, 5)和 (7, 1, 5)，那么是否可以广播呢？
+# 做右对齐, 空缺的位置假想为1:
+# 8, 1, 6, 5
+# 1, 7, 1, 5
+# 按照以上规则得出是可以广播的，操作结果的shape应为(8, 7, 6, 5)
+#======================================================================
 x = torch.ones(3, 4, 1)  # 3*4*1 => 3*4*5
 y = torch.ones(1, 1, 5)  # 1*2*5 => 3*4*5
 z = x + y
@@ -238,5 +246,26 @@ A = torch.rand(4, 5, dtype=float)  # Matrix-Matrix Products
 B = torch.rand(5, 8, dtype=float)
 print(torch.mm(A, B))  # => 4*8
 
+# 向量的 norm 范数/模
+v = torch.arange(2, dtype=float)
+print(v.abs().sum())  # 向量的 L1范数
+q = torch.tensor([3, 4], dtype=float)
+print(q.norm())  # 向量的 L2范数
+
+# 练习4，5
+x = torch.rand(7, 3, 4)  # len(tensor) = 0-轴的维度
+print(len(x))
+
+# 练习6
+# 由于沿某轴降维求和后，轴数减1，无法相除
+# 可以使 keepdims=True 保持维数,配合广播机制成功运行
+A = torch.rand(3, 4)
+print(A / A.sum(axis=1, keepdims=True))
+
+# 练习7
+x = torch.ones(2, 3, 4)
+print(x.sum(axis=0).shape)  # 3*4
+print(x.sum(axis=1).shape)  # 2*4
+print(x.sum(axis=2).shape)  # 2*3
 
 

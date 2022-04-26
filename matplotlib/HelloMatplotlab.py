@@ -4,6 +4,7 @@ import numpy as np
 
 fig, ax = plt.subplots()  # 一个有坐标轴的图
 ax.plot([1, 2, 3, 4], [2, 4, 0, 5])
+plt.show()
 
 
 fig = plt.figure()  # 一个空图

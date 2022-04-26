@@ -1,0 +1,37 @@
+# 预备数学知识--微积分
+# 在深度学习中，我们通常选择对于模型参数可微的损失函数。
+# 简而言之，对于每个参数， 如果我们把这个参数增加或减少一个无穷小的量，
+# 我们可以知道损失会以多快的速度增加或减少
+
+from IPython import display
+from d2l import torch as d2l
+import numpy as np
+import torch
+
+# 使用导数的定义求导数
+def f(x):
+    return 3 * x ** 2 - 4 * x
+
+
+def lim(f, x, h):   # 导数的定义
+    return (f(x + h) - f(x)) / h
+
+
+x = 1
+h = 0.1
+for i in range(0, 5):
+    print(f"h={h:.10f} numerial_lim={lim(f, x, h):.10f} ")
+    h *= 0.01
+
+# 练习3.
+# let y=f(x), Df(x) = x/y
+
+x = torch.arange(4.0, requires_grad=True)  # 自动微分求梯度
+y1 = 2 * torch.dot(x, x)  # y = 2 * (x1^2 + x2^2 + x3^2 + x4^2)
+y1.backward()  # 反向传播自动计算微分
+print(x.grad)  # 打印 y 对关于x 的梯度
+
+x.grad.zero_()  # 在默认情况下，PyTorch会累积梯度，我们需要清除之前的值
+y2 = x.sum()    # y = x1 + x2 + x3 +x4
+y2.backward()   # 反向传播自动计算微分
+print(x.grad)   # 打印 y 关于 x 的梯度
