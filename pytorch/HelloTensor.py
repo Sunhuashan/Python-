@@ -1,4 +1,4 @@
-# Pytorch入门程序-Tensor(张量)
+# PyTorch入门程序-Tensor(张量)
 import torch
 import numpy
 
@@ -50,7 +50,7 @@ y1 = tensor @ tensor.T
 y2 = tensor.matmul(tensor.T)
 y3 = torch.zeros_like(tensor)
 torch.matmul(tensor, tensor.T, out=y3)
-print(f"Matrix multipliction of tensor: \n {tensor}")
+print(f"Matrix multiplication of tensor: \n {tensor}")
 print(f"Result one: \n {y1}")
 print(f"Result two: \n {y2}")
 print(f"Result three: \n {y3} \n")
@@ -160,7 +160,7 @@ print(x_broc + y_broc)  # 使用广播机制后的元素级加法
 # 按照以上规则得出是可以广播的，操作结果的shape应为(8, 7, 6, 5)
 #======================================================================
 x = torch.ones(3, 4, 1)  # 3*4*1 => 3*4*5
-y = torch.ones(1, 1, 5)  # 1*2*5 => 3*4*5
+y = torch.ones(1, 1, 5)  # 1*1*5 => 3*4*5
 z = x + y
 print(z.shape)  # 3*4*5
 
@@ -233,7 +233,7 @@ x = torch.tensor([1, 3, 5, 2])
 y = torch.arange(4)
 print(x)
 print(y)
-print(torch.dot(x, y))  # 向量间的内积/点积
+print(torch.dot(x, y))  # 向量间的内积/点积 元素对应相乘的和
 print((x*y).sum())  # 内积的另一种实现
 
 A = torch.rand(4, 5, dtype=float)  # Matrix-Vector Products 矩阵向量积
